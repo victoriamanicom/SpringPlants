@@ -1,7 +1,11 @@
 package com.bae.plants.rest;
 
-import java.util.ArrayList;
+import java.util.List;
 
+import javax.websocket.server.PathParam;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,22 +33,41 @@ public class PlantController {
 	}
 
 	@PostMapping("/createPlant")
-	public Plant createPlant(@RequestBody Plant plant) {
-		return this.service.createPlant(plant);
+	public ResponseEntity<Plant> createPlant(@RequestBody Plant plant) {
+		Plant created = this.service.createPlant(plant);
+		return new ResponseEntity<>(created, HttpStatus.CREATED);
 	}
 
 	@GetMapping("/getPlants")
-	public ArrayList<Plant> getPlants() {
+	public List<Plant> getPlants() {
 		return this.service.getPlants();
 	}
 
+	@GetMapping("/getByName/{name}")
+	public List<Plant> getByName(@PathVariable String name) {
+		return this.service.getByName(name);
+	}
+
+	@GetMapping("/getByPotSizeGreaterThan/{potSize}")
+	public List<Plant> getPotSizeGreaterThan(@PathVariable int potSize) {
+		return this.service.getPotSizeGreaterThan(potSize);
+	}
+
+	@GetMapping("/getLeafColourAndSucculent")
+	public List<Plant> getLeafColourAndSucculent(@PathParam("leafColour") String leafColour,
+			@PathParam("isSucculent") boolean isSucculent) {
+		return this.service.getLeafColourAndSucculent(leafColour, isSucculent);
+	}
+
 	@DeleteMapping("/deletePlant/{id}")
-	public String deletePlant(@PathVariable int id) {
-		return this.service.deletePlant(id);
+	public ResponseEntity<String> deletePlant(@PathVariable int id) {
+		String body = this.service.deletePlant(id);
+		return new ResponseEntity<String>(body, HttpStatus.NO_CONTENT);
 	}
 
 	@PutMapping("/updatePlant/{id}")
-	public Plant updatePlant(@PathVariable int id, @RequestBody Plant plant) {
-		return this.service.updatePlant(id, plant);
+	public ResponseEntity<Plant> updatePlant(@PathVariable int id, @RequestBody Plant plant) {
+		Plant body = this.service.updatePlant(id, plant);
+		return new ResponseEntity<Plant>(body, HttpStatus.ACCEPTED);
 	}
 }
